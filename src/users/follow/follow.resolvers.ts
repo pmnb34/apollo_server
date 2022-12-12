@@ -1,6 +1,5 @@
 import { Resolvers } from "../../types";
 import client from "../../client";
-import bcrypt from "bcrypt";
 
 interface following {
   id?: number;
@@ -13,7 +12,7 @@ const resolvers: Resolvers = {
         if (loggedInUser) {
           const followingUser = await client.user.findFirst({ where: { id } });
           if (followingUser) {
-            const update = await client.user.update({
+            const updated = await client.user.update({
               where: {
                 id: loggedInUser.id as number,
               },
@@ -25,23 +24,26 @@ const resolvers: Resolvers = {
                 },
               },
             });
-            if (update) {
+            if (!updated) {
               return {
-                success: true,
-                message: "팔로잉 성공",
+                success: false,
+                message: "팔로잉에 실패했습니다.",
               };
             }
+            return {
+              success: true,
+              message: "팔로잉에 성공했습니다.",
+            };
           }
           return {
             success: false,
-            message: "유저가 없습니다.",
+            message: "로그인이 필요합니다.",
           };
         }
-      } catch (err) {
-        console.log(err);
+      } catch (e) {
         return {
           success: false,
-          message: "팔로잉 실패",
+          message: "작업 실패",
         };
       }
     },
@@ -51,7 +53,7 @@ const resolvers: Resolvers = {
         if (loggedInUser) {
           const followingUser = await client.user.findFirst({ where: { id } });
           if (followingUser) {
-            const update = await client.user.update({
+            const updated = await client.user.update({
               where: {
                 id: loggedInUser.id as number,
               },
@@ -63,23 +65,26 @@ const resolvers: Resolvers = {
                 },
               },
             });
-            if (update) {
+            if (!updated) {
               return {
-                success: true,
-                message: "언팔로우 성공",
+                success: false,
+                message: "언팔로우에 실패했습니다.",
               };
             }
+            return {
+              success: true,
+              message: "언팔로우에 성공했습니다.",
+            };
           }
           return {
             success: false,
-            message: "유저가 없습니다.",
+            message: "로그인이 필요합니다.",
           };
         }
-      } catch (err) {
-        console.log(err);
+      } catch (e) {
         return {
           success: false,
-          message: "언팔로우 실패",
+          message: "작업 실패",
         };
       }
     },

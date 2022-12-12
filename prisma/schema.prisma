@@ -18,16 +18,16 @@ model User {
   password     String
   avatar       String?
   introduction String?
-  point        Int            @default(100)
   feed         Feed[]
-  Comment      Comment[]
-  Like         Like[]
-  followers    User[]       @relation("follow")
-  followings   User[]       @relation("follow")
+  comment      Comment[]
+  like         Like[]
+  followers    User[]         @relation("follow")
+  followings   User[]         @relation("follow")
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   loginHistory loginHistory[]
   report       report[]
+  point        Point[]
 }
 
 model loginHistory {
@@ -48,10 +48,11 @@ model Feed {
   viewCount Int       @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Comment   Comment[]
-  Hashtag   Hashtag[]
-  Like      Like[]
+  comment   Comment[]
+  hashtag   Hashtag[]
+  like      Like[]
   report    report[]
+  point     Point[]
 }
 
 model Like {
@@ -83,15 +84,16 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
-// model Follow {
-//   follower    User    @relation("follower", fields: [followerId], references: [id])
-//   following   User    @relation("following", fields: [followingId], references: [id])
-//   followerId  Int
-//   followingId Int
-//   createdAt   DateTime @default(now())
-
-//   @@id([followerId, followingId])
-// }
+model Point {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  feed      Feed     @relation(fields: [feedId], references: [id])
+  userId    Int
+  feedId    Int
+  body      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model report {
   id        Int      @id @default(autoincrement())

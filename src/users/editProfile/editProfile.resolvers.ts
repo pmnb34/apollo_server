@@ -28,22 +28,21 @@ const resolvers: Resolvers = {
               introduction,
             },
           });
-          if (updated) {
-            return {
-              success: true,
-              message: "업데이트 성공",
-            };
-          } else {
+          if (!updated) {
             return {
               success: false,
-              message: "업데이트 실패",
+              message: "프로필을 업데이트하지 못했습니다.",
             };
           }
+          return {
+            success: true,
+            message: "프로필을 업데이트했습니다",
+          };
         }
       } catch (err) {
         return {
           success: false,
-          message: "업데이트 실패",
+          message: "작업 실패",
         };
       }
     },

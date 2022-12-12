@@ -2,7 +2,7 @@ export const typeDefs = `
 type LoginResult {
     success: Boolean!
     token: String
-    error: String
+    message: String
 }
 type Mutation {
     login(

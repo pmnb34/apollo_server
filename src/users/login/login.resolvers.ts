@@ -13,45 +13,48 @@ const resolvers: Resolvers = {
   Mutation: {
     login: async (_, { email, password }: login, { ua }) => {
       try {
-        const user = await client.user.findFirst({
+        const isUser = await client.user.findFirst({
           where: {
             email,
           },
         });
-        if (!user) {
+        if (!isUser) {
           return {
             success: false,
             message: "회원정보를 확인해주세요.",
           };
         }
-        const passwordCompare = await bcrypt.compare(password, user.password);
+        const passwordCompare = await bcrypt.compare(password, isUser.password);
         if (!passwordCompare) {
           return {
             success: false,
-            message: "비밀번호를 확인하세요.",
+            message: "이메일 또는 비밀번호를 확인해주세요.",
           };
         }
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY as string);
+        const token = jwt.sign({ id: isUser.id }, process.env.JWT_SECRET_KEY as string);
         const ipAddress = ip.address();
-        console.log(ipAddress);
-        console.log(ua);
-        await client.loginHistory.create({
+        const created = await client.loginHistory.create({
           data: {
-            userId: user.id,
+            userId: isUser.id,
             ipAddress,
             userAgent: ua.ua,
           },
         });
+        if (!created) {
+          return {
+            success: false,
+            message: "로그인에 실패했습니다.",
+          };
+        }
         return {
           success: true,
-          message: "로그인을 환영합니다.",
+          message: "로그인에 성공했습니다.",
           token,
         };
       } catch (e) {
-        console.log(e);
         return {
           success: false,
-          message: "로그인에 실패했습니다.",
+          message: "작업 실패",
         };
       }
     },

@@ -27,7 +27,7 @@ const startApolloServer = async (schema: any) => {
     expressMiddleware(server, {
       context: async ({ req }) => ({
         loggedInUser: await loggedInUser(req.headers.token as string),
-        ua: parser(req.headers['user-agent'])
+        ua: parser(req.headers["user-agent"]),
       }),
     })
   );

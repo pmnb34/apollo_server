@@ -3,20 +3,26 @@ import client from "../../client";
 
 const resolvers: Resolvers = {
   Query: {
-    profile: (_, { username }) => {
+    profile: (_, { id }, { loggedInUser }) => {
       try {
-        return client.user.findFirst({
-          where: {
-            username,
-          },
-          select: {
-            id: true,
-            username: true,
-            email: true,
-          },
+        const isUser = client.user.findFirst({
+          where: loggedInUser ? { id: loggedInUser.id } : { id },
         });
-      } catch (error) {
-        return null;
+        if (!isUser) {
+          return {
+            success: false,
+            message: "회원 정보가 없습니다.",
+          };
+        }
+        return {
+          success: true,
+          user: isUser,
+        };
+      } catch (e) {
+        return {
+          success: false,
+          message: "작업 실패",
+        };
       }
     },
   },

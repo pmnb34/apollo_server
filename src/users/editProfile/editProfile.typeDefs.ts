@@ -7,7 +7,6 @@ type Mutation {
         password: String
         avatar: String
         introduction: String
-        updatedAt: String
     ): SuccessResponse
 }
 `;

@@ -12,19 +12,19 @@ const resolvers: Resolvers = {
   Mutation: {
     createAccount: async (_, { name, username, email, password }: createAccount) => {
       try {
-        const existUser = await client.user.findFirst({
+        const isUser = await client.user.findFirst({
           where: {
             OR: [{ username }, { email }],
           },
         });
-        if (existUser) {
+        if (isUser) {
           return {
             success: false,
             message: "이미 가입된 회원입니다.",
           };
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await client.user.create({
+        const created = await client.user.create({
           data: {
             name,
             username,
@@ -32,6 +32,12 @@ const resolvers: Resolvers = {
             password: hashedPassword,
           },
         });
+        if (!created) {
+          return {
+            success: false,
+            message: "회원가입에 실패했습니다.",
+          };
+        }
         return {
           success: true,
           message: "회원가입을 축하합니다.",
@@ -39,7 +45,7 @@ const resolvers: Resolvers = {
       } catch (e) {
         return {
           success: false,
-          message: "회원가입에 실패했습니다.",
+          message: "작업 실패",
         };
       }
     },

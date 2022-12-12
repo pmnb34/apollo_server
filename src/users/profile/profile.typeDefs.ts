@@ -1,5 +1,10 @@
 export const typeDefs = `
+type profileResponse {
+    success: Boolean!
+    message: String
+    user: User
+}
 type Query {
-    profile(username: String!): User
+    profile(id: Int!): profileResponse
 }
 `;

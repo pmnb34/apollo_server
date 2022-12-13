@@ -1,6 +1,17 @@
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "introduction" TEXT,
-ADD COLUMN     "point" INTEGER NOT NULL DEFAULT 100;
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "avatar" TEXT,
+    "introduction" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "loginHistory" (
@@ -60,13 +71,15 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
-CREATE TABLE "Follow" (
+CREATE TABLE "Point" (
     "id" SERIAL NOT NULL,
-    "followerId" INTEGER NOT NULL,
-    "followingId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "feedId" INTEGER NOT NULL,
+    "body" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Follow_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Point_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -82,10 +95,22 @@ CREATE TABLE "report" (
 );
 
 -- CreateTable
+CREATE TABLE "_follow" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "_FeedToHashtag" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Like_feedId_key" ON "Like"("feedId");
@@ -95,6 +120,12 @@ CREATE UNIQUE INDEX "Like_userId_key" ON "Like"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Hashtag_name_key" ON "Hashtag"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_follow_AB_unique" ON "_follow"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_follow_B_index" ON "_follow"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_FeedToHashtag_AB_unique" ON "_FeedToHashtag"("A", "B");
@@ -121,16 +152,22 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_feedId_fkey" FOREIGN KEY ("feedId") REFERENCES "Feed"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followerId_fkey" FOREIGN KEY ("followerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Point" ADD CONSTRAINT "Point_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Point" ADD CONSTRAINT "Point_feedId_fkey" FOREIGN KEY ("feedId") REFERENCES "Feed"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "report" ADD CONSTRAINT "report_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "report" ADD CONSTRAINT "report_feedId_fkey" FOREIGN KEY ("feedId") REFERENCES "Feed"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_follow" ADD CONSTRAINT "_follow_A_fkey" FOREIGN KEY ("A") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_follow" ADD CONSTRAINT "_follow_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_FeedToHashtag" ADD CONSTRAINT "_FeedToHashtag_A_fkey" FOREIGN KEY ("A") REFERENCES "Feed"("id") ON DELETE CASCADE ON UPDATE CASCADE;

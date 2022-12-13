@@ -18,13 +18,13 @@ model User {
   password     String
   avatar       String?
   introduction String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   feed         Feed[]
   comment      Comment[]
   like         Like[]
   followers    User[]         @relation("follow")
   followings   User[]         @relation("follow")
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
   loginHistory loginHistory[]
   report       report[]
   point        Point[]

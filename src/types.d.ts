@@ -2,7 +2,7 @@ type Context = {
   token: any;
   user: any;
   loggedInUser?: any;
-  ua?:any
+  req?: any;
 };
 export type Resolver = (root: any, args: any, context: Context, info: any) => any;
 

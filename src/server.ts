@@ -8,7 +8,7 @@ import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import schema from "./schema";
 import { loggedInUser } from "./users/users.utils";
-import parser from "ua-parser-js";
+
 const startApolloServer = async (schema: any) => {
   const app = express();
   const httpServer = http.createServer(app);
@@ -26,8 +26,8 @@ const startApolloServer = async (schema: any) => {
     cookieParser(),
     expressMiddleware(server, {
       context: async ({ req }) => ({
+        req,
         loggedInUser: await loggedInUser(req.headers.token as string),
-        ua: parser(req.headers["user-agent"]),
       }),
     })
   );

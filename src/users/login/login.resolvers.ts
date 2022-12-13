@@ -3,6 +3,7 @@ import client from "../../client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ip from "ip";
+import parser from "ua-parser-js";
 
 interface login {
   email: string;
@@ -11,7 +12,7 @@ interface login {
 
 const resolvers: Resolvers = {
   Mutation: {
-    login: async (_, { email, password }: login, { ua }) => {
+    login: async (_, { email, password }: login, { req }) => {
       try {
         const isUser = await client.user.findFirst({
           where: {
@@ -33,6 +34,7 @@ const resolvers: Resolvers = {
         }
         const token = jwt.sign({ id: isUser.id }, process.env.JWT_SECRET_KEY as string);
         const ipAddress = ip.address();
+        const ua = parser(req.headers["user-agent"]);
         const created = await client.loginHistory.create({
           data: {
             userId: isUser.id,

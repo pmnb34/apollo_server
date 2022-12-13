@@ -1,13 +1,15 @@
 export const typeDefs = `
-type profileResponse {
+
+type feedResponse {
     success: Boolean!
     message: String
-    user: User
+    feed: Feed
 }
+
 type Query {
     """
-    프로필 정보
+    피드 정보
     """
-    profile(id: Int! ): profileResponse
+    feed(id: Int!): feedResponse
 }
 `;

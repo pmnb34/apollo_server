@@ -9,6 +9,9 @@ type User {
     updatedAt: String!
 }
 type Query {
+    """
+    모든 유저 리스트
+    """
     allUsers: [User]
 }
 `;

@@ -9,6 +9,9 @@ type Feed {
     updatedAt: String
 }
 type Query {
+    """
+    모든 피드 리스트
+    """
     allFeeds: [Feed]
 }
 `;

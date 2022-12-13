@@ -5,6 +5,9 @@ type LoginResult {
     message: String
 }
 type Mutation {
+    """
+    로그인
+    """
     login(
         email: String!
         password: String!

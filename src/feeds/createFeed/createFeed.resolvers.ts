@@ -2,7 +2,6 @@ import { Resolvers } from "../../types";
 import client from "../../client";
 
 interface createFeed {
-  userId: number;
   body: string;
 }
 const resolvers: Resolvers = {
@@ -13,9 +12,9 @@ const resolvers: Resolvers = {
         const tags = ["tag", "태그", "태그 추가", "다른태그"];
         const created = await client.feed.create({
           data: {
-            userId: loggedInUser.id,
+            userId: 1,
             body,
-            hashtag: {
+            tags: {
               connectOrCreate: tags.map((tag) => {
                 return {
                   where: { name: tag },
@@ -25,7 +24,7 @@ const resolvers: Resolvers = {
             },
             point: {
               create: {
-                userId: loggedInUser.id,
+                userId: 1,
                 body: 100, // 피드 작성시 포인트
               } as any,
             },

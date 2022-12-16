@@ -16,7 +16,7 @@ const resolvers: Resolvers = {
         });
         const feedByTag = await client.feed.findMany({
           where: {
-            hashtag: {
+            tags: {
               name: {
                 contains: keyword,
               },

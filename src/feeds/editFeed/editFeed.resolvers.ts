@@ -18,7 +18,7 @@ const resolvers: Resolvers = {
             },
             data: {
               body,
-              hashtag: {
+              tags: {
                 deleteMany: {},
                 connectOrCreate: tags.map((tag) => {
                   return {

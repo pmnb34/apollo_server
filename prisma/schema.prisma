@@ -11,97 +11,141 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role         Role    @default(USER)
   name         String
-  email        String         @unique
-  username     String         @unique
+  email        String  @unique
+  username     String  @unique
   password     String
   avatar       String?
   introduction String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+
+  loginHistory LoginHistory[]
   feed         Feed[]
   comment      Comment[]
   like         Like[]
-  followers    User[]         @relation("follow")
-  followings   User[]         @relation("follow")
-  loginHistory loginHistory[]
-  report       report[]
+  view         View[]
   point        Point[]
+
+  followers  User[] @relation("follow")
+  followings User[] @relation("follow")
+
+  blocked  User[] @relation("block")
+  blocking User[] @relation("block")
+
+  report Report[]
 }
 
-model loginHistory {
+enum Role {
+  USER
+  ADMIN
+}
+
+model LoginHistory {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
   ipAddress String
   userAgent String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Feed {
-  id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id])
-  userId    Int
-  body      String
-  viewCount Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comment   Comment[]
-  hashtag   Hashtag[]
-  like      Like[]
-  report    report[]
-  point     Point[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  body String
+  tags Tag[]
+
+  isPublic Boolean @default(true)
+
+  comment Comment[]
+  like    Like[]
+  view    View[]
+  point   Point[]
+
+  report Report[]
+}
+
+model View {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feed   Feed @relation(fields: [feedId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+  feedId Int  @unique
+  userId Int  @unique
 }
 
 model Like {
   id        Int      @id @default(autoincrement())
-  feed      Feed     @relation(fields: [feedId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  feedId    Int      @unique
-  userId    Int      @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  feed   Feed @relation(fields: [feedId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+  feedId Int  @unique
+  userId Int  @unique
 }
 
-model Hashtag {
+model Tag {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
-  feed      Feed[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  name String @unique
+
+  feed Feed[]
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  body      String
-  user      User     @relation(fields: [userId], references: [id])
-  feed      Feed     @relation(fields: [feedId], references: [id])
-  userId    Int
-  feedId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  body     String
+  isPublic Boolean @default(true)
+
+  user   User @relation(fields: [userId], references: [id])
+  feed   Feed @relation(fields: [feedId], references: [id])
+  userId Int
+  feedId Int
 }
 
 model Point {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  feed      Feed     @relation(fields: [feedId], references: [id])
-  userId    Int
-  feedId    Int
-  body      Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  body Int @default(0)
+
+  user   User @relation(fields: [userId], references: [id])
+  feed   Feed @relation(fields: [feedId], references: [id])
+  userId Int
+  feedId Int
 }
 
-model report {
+model Report {
   id        Int      @id @default(autoincrement())
-  body      String
-  user      User     @relation(fields: [userId], references: [id])
-  feed      Feed     @relation(fields: [feedId], references: [id])
-  userId    Int
-  feedId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  body     String
+  isPublic Boolean @default(true)
+
+  user   User @relation(fields: [userId], references: [id])
+  feed   Feed @relation(fields: [feedId], references: [id])
+  userId Int
+  feedId Int
 }
+

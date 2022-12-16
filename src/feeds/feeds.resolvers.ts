@@ -3,16 +3,8 @@ import client from "../client";
 
 const resolvers: Resolvers = {
   Query: {
-    allFeeds: (_, __, { loggedInUser }) => {
-      return client.feed.findMany({
-        where: {
-          OR: [
-            {
-              userId: loggedInUser.id,
-            },
-          ],
-        },
-      });
+    allFeeds: (_, __) => {
+      return client.feed.findMany();
     },
   },
 };

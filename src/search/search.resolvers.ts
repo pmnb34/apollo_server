@@ -28,7 +28,7 @@ const resolvers: Resolvers = {
             OR: [
               { username: { contains: keyword } },
               { email: { contains: keyword } },
-              { introduction: { contains: keyword } },
+              // { introduction: { contains: keyword } },
             ],
           },
         });

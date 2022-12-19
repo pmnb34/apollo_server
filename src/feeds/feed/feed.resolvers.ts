@@ -7,7 +7,7 @@ interface feed {
 
 const resolvers: Resolvers = {
   Query: {
-    feed: async (_, { id }: feed, { loggedInUser }) => {
+    feed: async (_, { id }: feed,) => {
       try {
         const isFeed = await client.feed.findFirst({
           where: {
@@ -17,7 +17,7 @@ const resolvers: Resolvers = {
         if (!isFeed) {
           return {
             success: false,
-            message: "피드 정보가 없습니다. ",
+            message: "피드 정보가 없습니다.",
           };
         }
         return {

@@ -11,24 +11,24 @@ datasource db {
 }
 
 model User {
+  // 유저
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role         Role    @default(USER)
-  name         String
-  email        String  @unique
-  username     String  @unique
-  password     String
-  avatar       String?
-  introduction String?
+  role     Role   @default(USER)
+  email    String @unique
+  username String @unique
+  password String
+
+  profile Profile?
+  point   Point?
 
   loginHistory LoginHistory[]
   feed         Feed[]
   comment      Comment[]
   like         Like[]
   view         View[]
-  point        Point[]
 
   followers  User[] @relation("follow")
   followings User[] @relation("follow")
@@ -42,6 +42,44 @@ model User {
 enum Role {
   USER
   ADMIN
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name         String?
+  avatar       String?
+  introduction String?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model Point {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  body Int @default(0) // 총 보유 포인트
+
+  history PointHistory[]
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model PointHistory {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  body Int @default(0) // 포인트 변화량
+
+  point   Point @relation(fields: [pointId], references: [id])
+  feed    Feed  @relation(fields: [feedId], references: [id])
+  pointId Int
+  feedId  Int
 }
 
 model LoginHistory {
@@ -63,17 +101,19 @@ model Feed {
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
-  body String
-  tags Tag[]
+  body   String
+  tags   Tag[]
+  images String[] @default([])
 
-  isPublic Boolean @default(true)
+  isPublic  Boolean @default(true) // 공개, 삭제
+  isPrivate Boolean @default(false) // 전체, 개인
 
   comment Comment[]
   like    Like[]
   view    View[]
-  point   Point[]
 
-  report Report[]
+  report       Report[]
+  pointHistory PointHistory[]
 }
 
 model View {
@@ -113,21 +153,10 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  body     String
-  isPublic Boolean @default(true)
+  body String
 
-  user   User @relation(fields: [userId], references: [id])
-  feed   Feed @relation(fields: [feedId], references: [id])
-  userId Int
-  feedId Int
-}
-
-model Point {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  body Int @default(0)
+  isPublic  Boolean @default(true) // 공개, 삭제
+  isPrivate Boolean @default(false) // 전체댓글, 비밀댓글
 
   user   User @relation(fields: [userId], references: [id])
   feed   Feed @relation(fields: [feedId], references: [id])
@@ -148,4 +177,3 @@ model Report {
   userId Int
   feedId Int
 }
-

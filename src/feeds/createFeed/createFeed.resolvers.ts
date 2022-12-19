@@ -1,19 +1,29 @@
 import { Resolvers } from "../../types";
 import client from "../../client";
+import { FEED_CREATE_POINT } from "../../enum";
 
 interface createFeed {
   body: string;
+  tags: [string];
+  images: [string];
+  isPrivate: boolean;
 }
 const resolvers: Resolvers = {
   Mutation: {
-    createFeed: async (_, { body }: createFeed, { loggedInUser }) => {
+    createFeed: async (_, { body, tags, images, isPrivate }: createFeed, { loggedInUser }) => {
       try {
-        // hasTags => 바디 텍스트에서 #태그 리스트 생성
-        const tags = ["tag", "태그", "태그 추가", "다른태그"];
+        if (!loggedInUser) {
+          return {
+            success: false,
+            message: "로그인이 필요합니다.",
+          };
+        }
         const created = await client.feed.create({
           data: {
-            userId: 1,
+            userId: loggedInUser.id,
             body,
+            images,
+            isPrivate,
             tags: {
               connectOrCreate: tags.map((tag) => {
                 return {
@@ -22,18 +32,37 @@ const resolvers: Resolvers = {
                 };
               }),
             },
-            point: {
-              create: {
-                userId: 1,
-                body: 100, // 피드 작성시 포인트
-              } as any,
-            },
+
           },
         });
+        const updated = await client.point.upsert({
+          where: {
+            userId: loggedInUser.id
+          },
+          update: {
+            body: { increment: FEED_CREATE_POINT },
+            history: {
+              create: { body: FEED_CREATE_POINT, feedId: created?.id },
+            },
+          },
+          create: {
+            userId: loggedInUser.id,
+            body: FEED_CREATE_POINT,
+            history: {
+              create: { body: FEED_CREATE_POINT, feedId: created?.id },
+            },
+          },
+        } as any)
         if (!created) {
           return {
             success: false,
             message: "피드작성에 실패했습니다.",
+          };
+        }
+        if (!updated) {
+          return {
+            success: false,
+            message: "포인트 변경에 실패했습니다.",
           };
         }
         return {

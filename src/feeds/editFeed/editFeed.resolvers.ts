@@ -4,20 +4,25 @@ import client from "../../client";
 interface editFeed {
   id: number;
   body: string;
+  tags: [string];
+  images: [string];
+  isPrivate: boolean;
 }
 
 const resolvers: Resolvers = {
   Mutation: {
-    editFeed: async (_, { id, body }: editFeed, { loggedInUser }) => {
+    editFeed: async (_, { id, body, tags, images, isPrivate }: editFeed, { loggedInUser }) => {
       try {
         if (loggedInUser) {
-          const tags = ["또다른", "진짜 다른거임"];
           const updated = await client.feed.update({
             where: {
               id,
-            },
+              userId: loggedInUser.id
+            } as any,
             data: {
               body,
+              images,
+              isPrivate,
               tags: {
                 deleteMany: {},
                 connectOrCreate: tags.map((tag) => {

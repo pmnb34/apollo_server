@@ -21,11 +21,11 @@ const resolvers: Resolvers = {
               id: loggedInUser.id,
             },
             data: {
-              name,
+              // name,
               username,
               password: hashedPassword,
-              avatar,
-              introduction,
+              // avatar,
+              // introduction,
             },
           });
           if (!updated) {

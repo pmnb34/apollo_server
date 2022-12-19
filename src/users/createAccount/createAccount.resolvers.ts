@@ -3,14 +3,13 @@ import client from "../../client";
 import bcrypt from "bcrypt";
 
 interface createAccount {
-  name: string;
   username: string;
   email: string;
   password: string;
 }
 const resolvers: Resolvers = {
   Mutation: {
-    createAccount: async (_, { name, username, email, password }: createAccount) => {
+    createAccount: async (_, { username, email, password }: createAccount) => {
       try {
         const isUser = await client.user.findFirst({
           where: {
@@ -26,7 +25,6 @@ const resolvers: Resolvers = {
         const hashedPassword = await bcrypt.hash(password, 10);
         const created = await client.user.create({
           data: {
-            name,
             username,
             email,
             password: hashedPassword,

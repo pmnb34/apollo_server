@@ -34,10 +34,12 @@ const resolvers: Resolvers = {
         }
         const token = jwt.sign({ id: isUser.id }, process.env.JWT_SECRET_KEY as string);
         const ipAddress = ip.address();
-        const ua = parser(req.headers["user-agent"]);
+        const ua = parser(req?.headers["user-agent"]);
         const created = await client.loginHistory.create({
           data: {
-            userId: isUser.id,
+            user: {
+              connect: { id: isUser.id }
+            },
             ipAddress,
             userAgent: ua.ua,
           },

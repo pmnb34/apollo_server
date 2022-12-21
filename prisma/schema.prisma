@@ -12,14 +12,17 @@ datasource db {
 
 model User {
   // 유저
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   role     Role   @default(USER)
-  email    String @unique
-  username String @unique
-  password String
+  email    String? @unique
+  username String?
+  password String?
+
+  kakaoId String? @unique
+  refreshToken String? 
 
   profile Profile?
   point   Point?
@@ -54,7 +57,7 @@ model Profile {
   introduction String?
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  userId String  @unique
 }
 
 model Point {
@@ -67,7 +70,7 @@ model Point {
   history PointHistory[]
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  userId String  @unique
 }
 
 model PointHistory {
@@ -79,7 +82,7 @@ model PointHistory {
   point   Point @relation(fields: [pointId], references: [id])
   feed    Feed  @relation(fields: [feedId], references: [id])
   pointId Int
-  feedId  Int
+  feedId  String
 }
 
 model LoginHistory {
@@ -87,19 +90,19 @@ model LoginHistory {
   createdAt DateTime @default(now())
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId String
 
   ipAddress String
   userAgent String
 }
 
 model Feed {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId String
 
   body   String
   tags   Tag[]
@@ -123,8 +126,8 @@ model View {
 
   feed   Feed @relation(fields: [feedId], references: [id])
   user   User @relation(fields: [userId], references: [id])
-  feedId Int  @unique
-  userId Int  @unique
+  feedId String  @unique
+  userId String  @unique
 }
 
 model Like {
@@ -134,8 +137,8 @@ model Like {
 
   feed   Feed @relation(fields: [feedId], references: [id])
   user   User @relation(fields: [userId], references: [id])
-  feedId Int  @unique
-  userId Int  @unique
+  feedId String  @unique
+  userId String  @unique
 }
 
 model Tag {
@@ -160,8 +163,8 @@ model Comment {
 
   user   User @relation(fields: [userId], references: [id])
   feed   Feed @relation(fields: [feedId], references: [id])
-  userId Int
-  feedId Int
+  userId String
+  feedId String
 }
 
 model Report {
@@ -174,6 +177,6 @@ model Report {
 
   user   User @relation(fields: [userId], references: [id])
   feed   Feed @relation(fields: [feedId], references: [id])
-  userId Int
-  feedId Int
+  userId String
+  feedId String
 }

@@ -1,6 +1,6 @@
 export const typeDefs = `
 type Feed {
-    id: Int!
+    id: String!
     user: User
     userId: Int
     body: String

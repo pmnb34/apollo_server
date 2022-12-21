@@ -17,3 +17,11 @@ export const loggedInUser = async (token: string) => {
     return null;
   }
 };
+
+export const isLoggedIn = async (token: string) => {
+  try {
+    console.log(token);
+  } catch {
+    return null;
+  }
+};

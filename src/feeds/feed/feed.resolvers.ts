@@ -2,12 +2,12 @@ import { Resolvers } from "../../types";
 import client from "../../client";
 
 interface feed {
-  id: number;
+  id: string;
 }
 
 const resolvers: Resolvers = {
   Query: {
-    feed: async (_, { id }: feed,) => {
+    feed: async (_, { id }: feed) => {
       try {
         const isFeed = await client.feed.findFirst({
           where: {

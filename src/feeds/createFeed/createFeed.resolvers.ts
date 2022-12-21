@@ -32,12 +32,11 @@ const resolvers: Resolvers = {
                 };
               }),
             },
-
           },
         });
         const updated = await client.point.upsert({
           where: {
-            userId: loggedInUser.id
+            userId: loggedInUser.id,
           },
           update: {
             body: { increment: FEED_CREATE_POINT },
@@ -52,7 +51,7 @@ const resolvers: Resolvers = {
               create: { body: FEED_CREATE_POINT, feedId: created?.id },
             },
           },
-        } as any)
+        } as any);
         if (!created) {
           return {
             success: false,

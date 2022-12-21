@@ -10,6 +10,6 @@ type Query {
     """
     피드 정보
     """
-    feed(id: Int!): feedResponse
+    feed(id: String!): feedResponse
 }
 `;

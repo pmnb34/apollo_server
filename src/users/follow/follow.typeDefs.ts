@@ -4,10 +4,10 @@ type Mutation {
     """
     팔로잉
     """
-    following(id: Int!): SuccessResponse
+    following(id: String!): SuccessResponse
     """
     언팔로잉
     """
-    unfollowing(id: Int!): SuccessResponse
+    unfollowing(id: String!): SuccessResponse
 }
 `;

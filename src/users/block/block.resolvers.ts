@@ -2,7 +2,7 @@ import { Resolvers } from "../../types";
 import client from "../../client";
 
 interface block {
-  id?: number;
+  id?: string;
 }
 
 const resolvers: Resolvers = {
@@ -14,7 +14,7 @@ const resolvers: Resolvers = {
           if (isUser) {
             const updated = await client.user.update({
               where: {
-                id: loggedInUser.id as number,
+                id: loggedInUser.id as string,
               },
               data: {
                 blocking: {
@@ -55,7 +55,7 @@ const resolvers: Resolvers = {
           if (isUser) {
             const updated = await client.user.update({
               where: {
-                id: loggedInUser.id as number,
+                id: loggedInUser.id as string,
               },
               data: {
                 blocking: {

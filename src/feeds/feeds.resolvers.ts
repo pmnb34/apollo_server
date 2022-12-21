@@ -2,7 +2,7 @@ import { Resolvers } from "../types";
 import client from "../client";
 
 interface feeds {
-  id: number;
+  id: string;
 }
 
 const resolvers: Resolvers = {
@@ -10,14 +10,14 @@ const resolvers: Resolvers = {
     allFeeds: (_, { id }: feeds) => {
       if (!id) {
         return client.feed.findMany({
-          take: 2
+          take: 2,
         });
       }
       return client.feed.findMany({
         skip: 1,
         cursor: {
-          id
-        }
+          id,
+        },
       });
     },
   },

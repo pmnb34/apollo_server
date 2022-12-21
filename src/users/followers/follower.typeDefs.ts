@@ -8,11 +8,11 @@ type Query {
     """
     팔로워 리스트 
     """
-    follower(id: Int!): followerPayload
+    follower(id: String!): followerPayload
 
     """
     팔로잉 리스트 
     """
-    following(id: Int!): followerPayload
+    following(id: String!): followerPayload
 }
 `;

@@ -5,7 +5,7 @@ type Mutation {
     피드 수정
     """
     editFeed(
-        id: Int! 
+        id: String! 
         body: String!
         tags: [String]
         images: [String]

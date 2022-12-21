@@ -12,5 +12,12 @@ type Mutation {
         email: String!
         password: String!
     ): LoginResult
+    kakao(
+        token: String!
+    ): LoginResult
+
+    isLogin(
+        token: String!
+    ): LoginResult
 }
 `;

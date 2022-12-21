@@ -4,10 +4,10 @@ type Mutation {
     """
     피드 Like
     """
-    like(id: Int!): SuccessResponse
+    like(id: String!): SuccessResponse
     """
     피드 unLike
     """
-    unlike(id: Int!): SuccessResponse
+    unlike(id: String!): SuccessResponse
 }
 `;

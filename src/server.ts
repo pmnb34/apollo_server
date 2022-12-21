@@ -7,7 +7,7 @@ import cors from "cors";
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import schema from "./schema";
-import { loggedInUser } from "./users/users.utils";
+import { loggedInUser, isLoggedIn } from "./users/users.utils";
 
 const startApolloServer = async (schema: any) => {
   const app = express();
@@ -27,10 +27,12 @@ const startApolloServer = async (schema: any) => {
     expressMiddleware(server, {
       context: async ({ req }) => ({
         req,
+        isLoggedIn: await isLoggedIn(req.headers.token as string),
         loggedInUser: await loggedInUser(req.headers.token as string),
       }),
     })
   );
+
   await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT }, resolve));
   console.log(`🚀 Server ready at http://localhost:${process.env.PORT}/`);
 };

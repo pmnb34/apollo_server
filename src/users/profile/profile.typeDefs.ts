@@ -8,6 +8,6 @@ type Query {
     """
     프로필 정보
     """
-    profile(id: Int! ): profileResponse
+    profile(id: String! ): profileResponse
 }
 `;

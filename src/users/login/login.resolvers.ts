@@ -64,13 +64,13 @@ const resolvers: Resolvers = {
     kakao: async (_, { token }: any, { req }) => {
       try {
         const {
-          data: { access_token, refresh_token },
+          data: { access_token, refresh_token, expires_in, refresh_token_expires_in },
         } = await axios({
           method: "POST",
           data: {
             grant_type: "authorization_code",
-            client_id: "28e6691309c02ad3edcac8320f0204d3",
-            redirect_uri: "https://auth.expo.io/@leeseunghwan/frontend",
+            client_id: process.env.KAKAO_LOGIN_CLIENT_ID,
+            redirect_uri: process.env.KAKAO_LOGIN_REDIRECT_URI,
             code: token,
           },
           withCredentials: true,
@@ -79,17 +79,17 @@ const resolvers: Resolvers = {
           },
           url: `https://kauth.kakao.com/oauth/token`,
         });
-        console.log(access_token);
-        console.log(refresh_token);
-        if (!access_token || !refresh_token) {
+        if (!access_token || !refresh_token || !expires_in || !refresh_token_expires_in) {
           return {
             success: false,
             message: "토큰 발행 실패",
           };
         }
-
+        console.log(Date.now());
+        console.log(expires_in);
+        console.log(refresh_token_expires_in);
         const {
-          data: { id, connected_at, kakao_account },
+          data: { id, kakao_account },
         } = await axios({
           method: "GET",
           withCredentials: true,
@@ -99,10 +99,7 @@ const resolvers: Resolvers = {
           },
           url: `https://kapi.kakao.com/v2/user/me`,
         });
-        console.log(id);
-        console.log(connected_at);
-        console.log(kakao_account);
-        if (!id || !connected_at || !kakao_account) {
+        if (!id || !kakao_account) {
           return {
             success: false,
             message: "유저 정보 없음",
@@ -120,7 +117,6 @@ const resolvers: Resolvers = {
           const created = await client.user.create({
             data: {
               username: kakao_account?.profile?.nickname || null,
-              email: kakao_account?.email || null,
               profile: {
                 create: {
                   name: kakao_account?.profile?.nickname || null,
@@ -135,6 +131,7 @@ const resolvers: Resolvers = {
               },
               kakaoId: `${id}`,
               refreshToken: refresh_token,
+              // refreshTokenExpiredTime: Date.now()+refresh_token_expires_in
             },
           });
           if (!created) {
@@ -146,7 +143,9 @@ const resolvers: Resolvers = {
           return {
             success: true,
             message: "소셜 회원가입 성공",
+            id: created.kakaoId,
             token: access_token,
+            tokenTime: expires_in,
           };
         }
         // 회원있음
@@ -156,6 +155,7 @@ const resolvers: Resolvers = {
           },
           data: {
             refreshToken: refresh_token,
+            // refreshTokenExpiredTime: Date.now()+refresh_token_expires_in
             loginHistory: {
               create: {
                 ipAddress,
@@ -173,7 +173,9 @@ const resolvers: Resolvers = {
         return {
           success: true,
           message: "소셜 로그인 성공",
+          id: updated.kakaoId,
           token: access_token,
+          tokenTime: expires_in,
         };
         //     // 추후 acc 확인 -> 만료? -> 재발급 실행,
         //     // access_token Front 전달  & refresh_token DB 저장
@@ -186,11 +188,64 @@ const resolvers: Resolvers = {
         };
       }
     },
-    isLogin: async (_, { token }: any, { req }) => {
+  },
+  Query: {
+    refreshToken: async (_, { id, token, method }: any, { req }) => {
       try {
+        console.log(id);
         console.log(token);
+        console.log(method);
+
+        const { refreshToken, kakaoId } = (await client.user.findFirst({ where: { kakaoId: `${id}` } })) as any;
+        console.log(refreshToken);
+        // if(refresh_token_expires_in){
+        // return {
+        //   success: false,
+        //   message: "토큰 재발급 실패",
+        // };
+        // }
+        const {
+          data: { access_token, refresh_token, expires_in, refresh_token_expires_in },
+        } = await axios({
+          method: "POST",
+          data: {
+            grant_type: "refresh_token",
+            client_id: process.env.KAKAO_LOGIN_CLIENT_ID,
+            refresh_token: `${refreshToken}`,
+          },
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+          },
+          url: `https://kauth.kakao.com/oauth/token`,
+        });
+        if (refresh_token) {
+          const updated = await client.user.update({ where: { kakaoId: `${id}` }, data: { refreshToken } });
+          if (!updated) {
+            return {
+              success: false,
+              message: "토큰 갱신 실패",
+            };
+          }
+          return {
+            success: true,
+            id: updated.kakaoId,
+            token: access_token,
+            tokenTime: expires_in,
+            method: "kakao",
+          };
+        }
+        return {
+          success: true,
+          id: kakaoId,
+          token: access_token,
+          tokenTime: expires_in,
+          method: "kakao",
+        };
       } catch (e) {
-        console.log(e);
+        return {
+          success: false,
+          message: "작업 실패",
+        };
       }
     },
   },

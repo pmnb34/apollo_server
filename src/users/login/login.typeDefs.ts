@@ -1,8 +1,11 @@
 export const typeDefs = `
 type LoginResult {
     success: Boolean!
+    id:String
     token: String
+    tokenTime: String
     message: String
+    method: String
 }
 type Mutation {
     """
@@ -16,8 +19,13 @@ type Mutation {
         token: String!
     ): LoginResult
 
-    isLogin(
+    
+}
+type Query {
+    refreshToken(
+        id: String!
         token: String!
+        method: String!
     ): LoginResult
 }
 `;

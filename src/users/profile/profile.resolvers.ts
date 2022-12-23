@@ -3,7 +3,8 @@ import client from "../../client";
 
 const resolvers: Resolvers = {
   Query: {
-    profile: (_, { id }, { loggedInUser }) => {
+    profile: (_, { id }, { isLoggedIn, loggedInUser }: any) => {
+      console.log(isLoggedIn);
       try {
         const isUser = client.user.findFirst({
           where: loggedInUser ? { id: loggedInUser.id } : { id },

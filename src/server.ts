@@ -27,7 +27,8 @@ const startApolloServer = async (schema: any) => {
     expressMiddleware(server, {
       context: async ({ req }) => ({
         req,
-        isLoggedIn: await isLoggedIn(req.headers.token as string),
+        // isLoggedIn: await isLoggedIn(req.headers),
+        // isLoggedIn: await isLoggedIn(req.headers.token as string, req.headers.token_method as string),
         loggedInUser: await loggedInUser(req.headers.token as string),
       }),
     })

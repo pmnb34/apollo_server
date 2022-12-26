@@ -19,7 +19,6 @@ type Mutation {
         token: String!
     ): LoginResult
 
-    
 }
 type Query {
     refreshToken(

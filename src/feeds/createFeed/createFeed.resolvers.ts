@@ -2,6 +2,8 @@ import { Resolvers } from "../../types";
 import client from "../../client";
 import { FEED_CREATE_POINT } from "../../enum";
 
+import AWS from "aws-sdk";
+
 interface createFeed {
   body: string;
   tags: [string];
@@ -11,6 +13,10 @@ interface createFeed {
 const resolvers: Resolvers = {
   Mutation: {
     createFeed: async (_, { body, tags, images, isPrivate }: createFeed, { loggedInUser }) => {
+      console.log(body);
+      console.log(tags);
+      console.log(isPrivate);
+      console.log(images);
       try {
         if (!loggedInUser) {
           return {
@@ -25,7 +31,7 @@ const resolvers: Resolvers = {
             images,
             isPrivate,
             tags: {
-              connectOrCreate: tags.map((tag) => {
+              connectOrCreate: tags?.map((tag) => {
                 return {
                   where: { name: tag },
                   create: { name: tag },
@@ -69,6 +75,7 @@ const resolvers: Resolvers = {
           message: "피드작성에 성공했습니다.",
         };
       } catch (e) {
+        console.log(e);
         return {
           success: false,
           message: "작업 실패",
@@ -78,3 +85,24 @@ const resolvers: Resolvers = {
   },
 };
 export default resolvers;
+
+const uploadToS3 = async (file: any, userId: any, folderName: any) => {
+  AWS.config.update({
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESSKEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRETACCESSKEY as string,
+    },
+  });
+  const { filename, createReadStream } = await file;
+  const readStream = createReadStream();
+  const objectName = `${folderName}/${userId}-${Date.now()}-${filename}`;
+  const { Location } = await new AWS.S3()
+    .upload({
+      Bucket: "instaclone-uploads",
+      Key: objectName,
+      ACL: "public-read",
+      Body: readStream,
+    })
+    .promise();
+  return Location;
+};

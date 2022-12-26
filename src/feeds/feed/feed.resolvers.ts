@@ -2,7 +2,7 @@ import { Resolvers } from "../../types";
 import client from "../../client";
 
 interface feed {
-  id: string;
+  id: number;
 }
 
 const resolvers: Resolvers = {

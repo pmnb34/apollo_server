@@ -12,17 +12,19 @@ datasource db {
 
 model User {
   // 유저
-  id        String      @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  cuid      String   @unique @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role     Role   @default(USER)
+  role     Role    @default(USER)
   email    String? @unique
   username String?
   password String?
 
-  kakaoId String? @unique
-  refreshToken String? 
+  kakaoId                 String? @unique
+  refreshToken            String?
+  refreshTokenExpiredTime String?
 
   profile Profile?
   point   Point?
@@ -56,8 +58,8 @@ model Profile {
   avatar       String?
   introduction String?
 
-  user   User @relation(fields: [userId], references: [id])
-  userId String  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
 }
 
 model Point {
@@ -70,7 +72,7 @@ model Point {
   history PointHistory[]
 
   user   User @relation(fields: [userId], references: [id])
-  userId String  @unique
+  userId Int  @unique
 }
 
 model PointHistory {
@@ -82,27 +84,28 @@ model PointHistory {
   point   Point @relation(fields: [pointId], references: [id])
   feed    Feed  @relation(fields: [feedId], references: [id])
   pointId Int
-  feedId  String
+  feedId  Int
 }
 
 model LoginHistory {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
-  user   User @relation(fields: [userId], references: [id])
-  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
 
   ipAddress String
   userAgent String
 }
 
 model Feed {
-  id        String      @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  cuid      String   @unique @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user   User @relation(fields: [userId], references: [id])
-  userId String
+  userId Int
 
   body   String
   tags   Tag[]
@@ -126,8 +129,8 @@ model View {
 
   feed   Feed @relation(fields: [feedId], references: [id])
   user   User @relation(fields: [userId], references: [id])
-  feedId String  @unique
-  userId String  @unique
+  feedId Int  @unique
+  userId Int  @unique
 }
 
 model Like {
@@ -137,8 +140,8 @@ model Like {
 
   feed   Feed @relation(fields: [feedId], references: [id])
   user   User @relation(fields: [userId], references: [id])
-  feedId String  @unique
-  userId String  @unique
+  feedId Int  @unique
+  userId Int  @unique
 }
 
 model Tag {
@@ -163,8 +166,8 @@ model Comment {
 
   user   User @relation(fields: [userId], references: [id])
   feed   Feed @relation(fields: [feedId], references: [id])
-  userId String
-  feedId String
+  userId Int
+  feedId Int
 }
 
 model Report {
@@ -177,6 +180,6 @@ model Report {
 
   user   User @relation(fields: [userId], references: [id])
   feed   Feed @relation(fields: [feedId], references: [id])
-  userId String
-  feedId String
+  userId Int
+  feedId Int
 }

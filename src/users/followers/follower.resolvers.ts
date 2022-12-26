@@ -3,7 +3,7 @@ import client from "../../client";
 import bcrypt from "bcrypt";
 
 interface follower {
-  id?: string;
+  id?: number;
 }
 
 const resolvers: Resolvers = {

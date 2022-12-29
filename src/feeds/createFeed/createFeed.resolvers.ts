@@ -1,22 +1,19 @@
 import { Resolvers } from "../../types";
 import client from "../../client";
 import { FEED_CREATE_POINT } from "../../enum";
-
 import AWS from "aws-sdk";
-
+import fs from "fs";
 interface createFeed {
   body: string;
   tags: [string];
-  images: [string];
+  file: any;
   isPrivate: boolean;
 }
 const resolvers: Resolvers = {
   Mutation: {
-    createFeed: async (_, { body, tags, images, isPrivate }: createFeed, { loggedInUser }) => {
-      console.log(body);
-      console.log(tags);
-      console.log(isPrivate);
-      console.log(images);
+    createFeed: async (_, { body, file, tags, isPrivate }: createFeed, { loggedInUser }) => {
+      console.log(file);
+      console.log(loggedInUser);
       try {
         if (!loggedInUser) {
           return {
@@ -27,9 +24,9 @@ const resolvers: Resolvers = {
         const created = await client.feed.create({
           data: {
             userId: loggedInUser.id,
-            body,
-            images,
-            isPrivate,
+            body: "테스트",
+            images: file,
+            isPrivate: true,
             tags: {
               connectOrCreate: tags?.map((tag) => {
                 return {
@@ -85,24 +82,3 @@ const resolvers: Resolvers = {
   },
 };
 export default resolvers;
-
-const uploadToS3 = async (file: any, userId: any, folderName: any) => {
-  AWS.config.update({
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESSKEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRETACCESSKEY as string,
-    },
-  });
-  const { filename, createReadStream } = await file;
-  const readStream = createReadStream();
-  const objectName = `${folderName}/${userId}-${Date.now()}-${filename}`;
-  const { Location } = await new AWS.S3()
-    .upload({
-      Bucket: "instaclone-uploads",
-      Key: objectName,
-      ACL: "public-read",
-      Body: readStream,
-    })
-    .promise();
-  return Location;
-};

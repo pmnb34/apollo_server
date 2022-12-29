@@ -1,13 +1,17 @@
 export const typeDefs = `
+input Location {
+    latitude: String!
+    longitude: String!
+}
 type Mutation {
     """
     피드 작성
     """
     createFeed(
         body: String!
-        tags: [String]
         images: [String]
-        isPrivate: Boolean!
+        tags: [String]
+        location: Location
     ): SuccessResponse
 }
 `;

@@ -108,8 +108,9 @@ model Feed {
   userId Int
 
   body   String
-  tags   Tag[]
   images String[] @default([])
+  tags   Tag[]
+  location Location[]
 
   isPublic  Boolean @default(true) // 공개, 삭제
   isPrivate Boolean @default(false) // 전체, 개인
@@ -121,6 +122,7 @@ model Feed {
   report       Report[]
   pointHistory PointHistory[]
 }
+
 
 model View {
   id        Int      @id @default(autoincrement())
@@ -153,6 +155,18 @@ model Tag {
 
   feed Feed[]
 }
+model Location {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  latitude String @unique
+  longitude String @unique
+
+  feed Feed[]
+}
+
+
 
 model Comment {
   id        Int      @id @default(autoincrement())

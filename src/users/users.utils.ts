@@ -5,14 +5,14 @@ import axios from "axios";
 export const loggedInUser = async (token: string, method: string) => {
   try {
     switch (method) {
-      case "kakao":
+      case `kakao`:
         return await kakao_LoggedInUser(token);
-      case "email":
+      case `email`:
         return await email_LoggedInUser(token);
       default:
         return null;
     }
-  } catch {
+  } catch (e) {
     return null;
   }
 };
@@ -29,7 +29,7 @@ const kakao_LoggedInUser = async (token: string) => {
     },
     url: `https://kapi.kakao.com/v2/user/me`,
   });
-  const user = await client.user.findUnique({ where: { kakaoId: id } });
+  const user = await client.user.findUnique({ where: { kakaoId: `${id}` } });
   if (user) {
     return user;
   } else {

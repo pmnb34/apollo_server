@@ -17,11 +17,11 @@ const resolvers: Resolvers = {
           const updated = await client.feed.update({
             where: {
               id,
-              userId: loggedInUser.id
+              userId: loggedInUser.id,
             } as any,
             data: {
               body,
-              images,
+              // images,
               isPrivate,
               tags: {
                 deleteMany: {},

@@ -1,10 +1,15 @@
 export const typeDefs = `
+type Profile {
+    name: String
+    avatar: String
+    introduction: String
+}
 type User {
     id: String!
     name: String
     email: String!
     username: String!
-    avatar: String
+    profile: Profile
     createdAt: String!
     updatedAt: String!
 }

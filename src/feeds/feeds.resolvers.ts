@@ -10,14 +10,22 @@ const resolvers: Resolvers = {
     allFeeds: (_, { id }: feeds) => {
       if (!id) {
         return client.feed.findMany({
-          take: 2,
+          take: 4,
+          orderBy: {
+            id: "desc",
+          },
+          include: {
+            user: { include: { profile: true } },
+            images: true,
+          },
         });
       }
       return client.feed.findMany({
-        skip: 1,
-        cursor: {
-          id,
-        },
+        // skip: 1,
+        // cursor: {
+        //   id,
+        // },
+        include: { user: true },
       });
     },
   },

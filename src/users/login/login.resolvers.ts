@@ -128,7 +128,7 @@ const resolvers: Resolvers = {
           const created = await client.user.create({
             data: {
               username: kakao_account?.profile?.nickname || null,
-              email:kakao_account?.email || null,
+              email: kakao_account?.email || null,
               profile: {
                 create: {
                   name: kakao_account?.profile?.nickname || null,
@@ -200,11 +200,12 @@ const resolvers: Resolvers = {
   },
   Query: {
     refreshToken: async (_, { id, token, method }: any, { req }) => {
+      console.log(id, token, method);
       try {
         switch (method) {
-          case "kakao":
+          case `kakao`:
             return await kakaoRefreshTokenFn(id, token, method);
-          case "email":
+          case `email`:
             return await emailRefreshTokenFn(id, token, method);
           default:
             return {
@@ -213,6 +214,7 @@ const resolvers: Resolvers = {
             };
         }
       } catch (e) {
+        console.log(e);
         return {
           success: false,
           message: "작업 실패",

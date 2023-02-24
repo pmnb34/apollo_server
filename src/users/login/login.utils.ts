@@ -47,23 +47,25 @@ export const emailRefreshTokenFn = async (id: any, token: any, method: any) => {
   };
 };
 export const kakaoRefreshTokenFn = async (id: any, token: any, method: any) => {
-  const {
-    data: { id: tokenId },
-  }: any = await axios({
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    url: `https://kapi.kakao.com/v1/user/access_token_info`,
-  });
-  if (!tokenId) {
-    return {
-      success: false,
-      message: "토큰 확인 실패",
-    };
-  }
+  // const {
+  //   data: { id: tokenId, code: notExist },
+  // }: any = await axios({
+  //   method: "GET",
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  //   url: `https://kapi.kakao.com/v1/user/access_token_info`,
+  // });
+  // console.log(tokenId);
+  // console.log(notExist);
+  // if (!tokenId) {
+  //   return {
+  //     success: false,
+  //     message: "토큰 확인 실패",
+  //   };
+  // }
   const { kakaoId, refreshToken, refreshTokenExpiredTime }: any = await client.user.findFirst({
-    where: { kakaoId: `${tokenId}` },
+    where: { kakaoId: `${id}` },
   });
   const nowTime = Math.ceil(Date.now() / 1000);
   const gap = Number(refreshTokenExpiredTime) - Number(nowTime);

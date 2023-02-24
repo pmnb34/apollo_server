@@ -107,9 +107,9 @@ model Feed {
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
-  body   String
-  images String[] @default([])
-  tags   Tag[]
+  body     String
+  images   Images[]
+  tags     Tag[]
   location Location[]
 
   isPublic  Boolean @default(true) // 공개, 삭제
@@ -123,6 +123,16 @@ model Feed {
   pointHistory PointHistory[]
 }
 
+model Images {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  index    Int
+  location String
+
+  feed   Feed @relation(fields: [feedId], references: [id])
+  feedId Int  
+}
 
 model View {
   id        Int      @id @default(autoincrement())
@@ -155,18 +165,17 @@ model Tag {
 
   feed Feed[]
 }
+
 model Location {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  latitude String @unique
+  latitude  String @unique
   longitude String @unique
 
   feed Feed[]
 }
-
-
 
 model Comment {
   id        Int      @id @default(autoincrement())

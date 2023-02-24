@@ -6,14 +6,18 @@ import fs from "fs";
 interface createFeed {
   body: string;
   tags: [string];
-  file: any;
+  images: any;
   isPrivate: boolean;
 }
 const resolvers: Resolvers = {
   Mutation: {
-    createFeed: async (_, { body, file, tags, isPrivate }: createFeed, { loggedInUser }) => {
-      console.log(file);
-      console.log(loggedInUser);
+    createFeed: async (_, { body, images, tags, isPrivate }: createFeed, { loggedInUser }) => {
+      console.log(images);
+      // var path = require(images[0].uri);
+      // let response = await fetch(path);
+      // var blob = await response.blob();
+      // var file = new File([blob], "image/jpeg", { type: "image/jpeg" });
+      // console.log(file);
       try {
         if (!loggedInUser) {
           return {
@@ -24,8 +28,14 @@ const resolvers: Resolvers = {
         const created = await client.feed.create({
           data: {
             userId: loggedInUser.id,
-            body: "테스트",
-            images: file,
+            body,
+            images: {
+              createMany: {
+                data: await images?.map((img: any) => {
+                  return { index: img.index, location: img.location };
+                }),
+              },
+            } as any,
             isPrivate: true,
             tags: {
               connectOrCreate: tags?.map((tag) => {

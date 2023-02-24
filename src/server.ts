@@ -21,7 +21,11 @@ const startApolloServer = async (schema: any) => {
 
   app.use(
     "/",
-    cors(),
+    cors({
+      origin: "*",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["Authorization", "Content-Type"],
+    }),
     bodyParser.json(),
     cookieParser(),
     expressMiddleware(server, {

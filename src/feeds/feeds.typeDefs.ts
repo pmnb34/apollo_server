@@ -1,9 +1,15 @@
 export const typeDefs = `
+type Image {
+    id: Int!
+    index:Int
+    location: String!
+}
 type Feed {
-    id: String!
+    id: Int!
     user: User
     userId: Int
     body: String
+    images: [Image]
     viewCount: Int
     createdAt: String
     updatedAt: String

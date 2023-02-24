@@ -5,9 +5,11 @@ import jwt from "jsonwebtoken";
 const resolvers: Resolvers = {
   Query: {
     allUsers: (_, __, { loggedInUser }) => {
-      if (loggedInUser) {
-        return client.user.findMany();
-      }
+      // if (loggedInUser) {
+      return client.user.findMany({
+        include: { profile: true },
+      });
+      // }
       return null;
     },
   },
